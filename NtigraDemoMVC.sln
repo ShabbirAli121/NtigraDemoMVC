@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34003.232
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtigraDemoMVC", "NtigraDemoMVC\NtigraDemoMVC.csproj", "{4AF7C283-8F59-4F6A-92DF-3CEA5B5E409C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4AF7C283-8F59-4F6A-92DF-3CEA5B5E409C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AF7C283-8F59-4F6A-92DF-3CEA5B5E409C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AF7C283-8F59-4F6A-92DF-3CEA5B5E409C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AF7C283-8F59-4F6A-92DF-3CEA5B5E409C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6321A1E7-BD73-4629-8D05-DEE324B89836}
+	EndGlobalSection
+EndGlobal
