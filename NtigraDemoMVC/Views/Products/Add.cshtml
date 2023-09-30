@@ -1,0 +1,25 @@
+﻿@model NtigraDemoMVC.Models.AddProductViewModel
+@{
+
+}
+
+<h1>Add Product</h1>
+<form method="post" action="Add" class="mt-5">
+    <div class="mb-3">
+        <label for="productName" name="productName"  class="form-label">Name</label>
+        <input type="text" class="form-control" required asp-for="Name" id="productNameInput">
+    </div>
+    <div class="mb-3">
+        <label for="productDesc" name="productDesc" class="form-label">Description</label>
+        <textarea class="form-control" rows="3" asp-for="Description" id="productDescInput"> </textarea>
+    </div>
+    <div class="mb-3">
+        <label for="productPrice" name="productPrice" class="form-label">Price</label>
+        <input type="number" min="0.0" step="1.0" required class="form-control" asp-for="Price" id="productPriceInput">
+    </div>
+    <div class="mb-3">
+        <label for="productDiscount" name="productDiscount" class="form-label">Discount</label>
+        <input type="number" min="0.0" class="form-control" asp-for="Discount" id="productDiscountInput">
+    </div>
+    <button type="submit" class="btn btn-primary"><i class="fa fa-add" /> Add Product</button>
+</form>

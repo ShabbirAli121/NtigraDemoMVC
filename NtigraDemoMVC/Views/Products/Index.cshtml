@@ -1,0 +1,65 @@
+﻿@model List<NtigraDemoMVC.Models.Domain.Product>
+@{
+
+}
+
+<h1>Products
+    
+</h1>
+<button class="btn btn-defailt" asp-controller="Products" asp-action="Add" name="addProduct"><i class="fa fa-add" aria-hidden="true"></i> Add Product</button>
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>            
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Discount</th>
+            <th>Created</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>            
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price</td>
+                <td>@product.Discount</td>
+                <td>@product.Created.ToString("dd-MMM-yyyy hh:mm tt")</td>
+                <td><a href="Products/Edit/@product.Id" class="btn btn-primary"><i class="fa fa-edit" aria-hidden="true"></i></a>&nbsp; <a onclick="showConfirmation('@product.Id', '@product.Name')" href="javascript:void(0);" class="btn btn-primary"><i class="fa fa-trash" aria-hidden="true"></i></a> </td>
+            </tr>            
+        }
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td class="text-center" colspan="6">
+                    
+                        No product(s) available.
+                    
+                </td>
+            </tr>
+        }
+    </tbody>
+   
+</table>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+<script>
+    function showConfirmation(id, name) {
+        var result = window.confirm("Are you sure you want to delete " + name +" item?");
+        if (result) {
+            location.href = "Products/Delete/" + id;
+            // User clicked "OK," perform the delete action here
+            // You can make an AJAX call or submit a form to delete the item
+        } else {
+            // User clicked "Cancel," do nothing or handle accordingly
+        }
+    }
+</script>

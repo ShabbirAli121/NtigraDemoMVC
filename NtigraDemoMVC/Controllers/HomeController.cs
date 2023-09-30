@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace NtigraDemoMVC.Controllers
 {
-    public class HomeController : Controller
+    public class PurchaseController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<PurchaseController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public PurchaseController(ILogger<PurchaseController> logger)
         {
             _logger = logger;
         }
