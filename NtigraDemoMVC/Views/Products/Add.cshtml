@@ -1,4 +1,4 @@
-﻿@model NtigraDemoMVC.Models.AddProductViewModel
+﻿@model NtigraDemoMVC.Models.ProductViewModel
 @{
 
 }
@@ -15,11 +15,11 @@
     </div>
     <div class="mb-3">
         <label for="productPrice" name="productPrice" class="form-label">Price</label>
-        <input type="number" min="0.0" step="1.0" required class="form-control" asp-for="Price" id="productPriceInput">
+        <input type="number" min="0.0" step="0.01" required class="form-control" asp-for="Price" id="productPriceInput">
     </div>
     <div class="mb-3">
         <label for="productDiscount" name="productDiscount" class="form-label">Discount</label>
-        <input type="number" min="0.0" class="form-control" asp-for="Discount" id="productDiscountInput">
+        <input type="number" min="0.0" step="0.01" class="form-control" asp-for="Discount" id="productDiscountInput">
     </div>
-    <button type="submit" class="btn btn-primary"><i class="fa fa-add" /> Add Product</button>
+    <button type="submit" class="btn btn-primary"><i class="fa fa-plus"></i>&nbsp; Add Product</button>
 </form>

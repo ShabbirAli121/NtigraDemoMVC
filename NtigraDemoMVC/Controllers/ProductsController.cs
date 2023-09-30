@@ -22,7 +22,15 @@ namespace NtigraDemoMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var products = await _dbContext.Products.ToListAsync();
+            var products = await _dbContext.Products.Select(p => new ProductViewModel()
+            {
+                Id = p.Id,
+                Created = p.Created,
+                Description = p.Description,
+                Discount = p.Discount,
+                Name = p.Name,
+                Price = p.Price
+            }).ToListAsync();
             return View(products);
         }
 
@@ -33,6 +41,31 @@ namespace NtigraDemoMVC.Controllers
         }
 
         /// <summary>
+        /// This action will be called when user clicked on add new product
+        /// </summary>
+        /// <param name="productRequest"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Add(ProductViewModel productRequest)
+        {
+            if (productRequest != null)
+            {
+                await _dbContext.Products.AddAsync(new Product()
+                {
+                    Id = Guid.NewGuid(),
+                    Created = DateTime.Now,
+                    Name = productRequest.Name,
+                    Description = productRequest.Description,
+                    Discount = productRequest.Discount,
+                    Price = productRequest.Price,
+                });
+                await _dbContext.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
         /// THis Action is called when user click on edit product button
         /// </summary>
         /// <param name="id"></param>
@@ -40,7 +73,7 @@ namespace NtigraDemoMVC.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var product = await _dbContext.Products.Where(product => product.Id == id).Select(p => new UpdateProductViewModel()
+            var product = await _dbContext.Products.Where(product => product.Id == id).AsNoTracking().Select(p => new ProductViewModel()
             {
                 Id = p.Id,
                 Created = p.Created,
@@ -61,66 +94,49 @@ namespace NtigraDemoMVC.Controllers
 
 
         /// <summary>
+        /// Save Product to the database
+        /// </summary>
+        /// <param name="productRequest"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IActionResult> Edit(ProductViewModel productRequest)
+        {
+            var product = await _dbContext.Products.Where(s => s.Id == productRequest.Id).FirstOrDefaultAsync();
+            product.Name = productRequest.Name;
+            product.Description = productRequest.Description;
+            product.Discount = productRequest.Discount;
+            product.Price = productRequest.Price;
+            
+            _dbContext.Entry<Product>(product).State = EntityState.Modified;
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
         /// This Action is used to Delete the product
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete]
         public async Task<IActionResult> Delete(Guid id)
-        {            
-            
-            _dbContext.Entry<Product>(new Product()
-            {
-                Id = id
-            }).State = EntityState.Deleted;
-            await _dbContext.SaveChangesAsync();
-            TempData["Message"] = "Item deleted successfully.";
-
-            return RedirectToAction("Index");
-        }
-
-
-        /// <summary>
-        /// This action will be called when user clicked on add new product
-        /// </summary>
-        /// <param name="productRequest"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IActionResult> Add(AddProductViewModel productRequest)
         {
-            var product = new Product()
+            try
             {
-                Id = Guid.NewGuid(),
-                Created = DateTime.Now,
-                Name = productRequest.Name,
-                Description = productRequest.Description,
-                Discount = productRequest.Discount,
-                Price = productRequest.Price,
-            };
+                _dbContext.Entry<Product>(new Product()
+                {
+                    Id = id
+                }).State = EntityState.Deleted;
+                await _dbContext.SaveChangesAsync();
 
-            await _dbContext.Products.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UpdateProduct(UpdateProductViewModel productRequest)
-        {
-            var product = new Product()
+                return Json(new { success = true, message = "Item deleted successfully." });
+            }
+            catch (Exception ex)
             {
-                Id = Guid.NewGuid(),
-                Created = productRequest.Created,
-                Name = productRequest.Name,
-                Description = productRequest.Description,
-                Discount = productRequest.Discount,
-                Price = productRequest.Price,
-            };
+                return Json(new { success = false, message = ex.Message });
+            }
 
-            _dbContext.Entry<Product>(product).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
 
-            return RedirectToAction("Index");
-        }
+        }     
     }
 }

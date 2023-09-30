@@ -1,8 +1,134 @@
-﻿@{
-    ViewData["Title"] = "Purchase Page";
-}
+﻿@model NtigraDemoMVC.Models.CartViewModel
+@using System.Globalization;
+<H1>Select Products</H1>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Purchase Web apps with ASP.NET Core</a>.</p>
-</div>
+<form method="post" asp-controller="Purchase" asp-action="Buy" data="@Model.PurchasedProducts.Where(s => s.IsSelected).ToList()">
+    <table class="table table-hover">
+        <thead>
+            <tr>                
+                <th>Name</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Discount</th>
+                <th>Quantity</th>
+                <th>Select</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model.PurchasedProducts != null)
+            {
+                @for (var i = 0; i < Model.PurchasedProducts.Count; i++)
+                {
+                    <tr>                        
+                        <td>@Model.PurchasedProducts[i].Name</td>
+                        <td>@Model.PurchasedProducts[i].Description</td>
+                        <td>@Model.PurchasedProducts[i].Price.ToString("C", new CultureInfo("en-US"))</td>
+                        <td>@Model.PurchasedProducts[i].Discount.ToString("C", new CultureInfo("en-US"))</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-danger" data-index="@i" onclick="decrementQuantity(@i)">-</button>
+                                <input type="number" style="text-align: center;" name="qtyInput-@i" asp-for="@Model.PurchasedProducts[i].Quantity" min="0" step="1" />
+                                <button type="button" class="btn btn-success" data-index="@i" onclick="incrementQuantity(@i)">+</button>
+                            </div>
+                        </td>
+                        <td> <input class="form-check-input" name="itemSelect-@i" type="checkbox" id="isSelectCheckbox" onchange="onItemSelected(@i)" asp-for="@Model.PurchasedProducts[i].IsSelected"  />                            
+                        </td>
+                    </tr>
+                }
+                @if (Model.PurchasedProducts.Count == 0)
+                {
+                    <tr>
+                        <td class="text-center" colspan="6">
+                            No product(s) available to purchase.
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+        
+    </table>
+    <button type="button" class="btn btn-primary pull-right col-2" onclick="submitModifiedData()"><i class="fa fa-cart-arrow-down"></i> Buy</button>
+</form>
+
+<script>
+    function incrementQuantity(index) {        
+        var currentQuantity = parseInt(document.querySelector("[name='qtyInput-" + index + "']").value);
+        currentQuantity++;
+        updateQuantity(index, currentQuantity);
+
+        if (currentQuantity == 1)
+            document.querySelector("[name='itemSelect-" + index + "']").checked = true;
+    }
+
+    function decrementQuantity(index) {        
+        var currentQuantity = parseInt(document.querySelector("[name='qtyInput-" + index + "']").value);
+        if (currentQuantity > 0) {
+            currentQuantity--;
+            updateQuantity(index, currentQuantity);
+        }
+        if (currentQuantity == 0)
+            document.querySelector("[name='itemSelect-" + index + "']").checked = false;
+    }
+
+    function updateQuantity(index, newQuantity) {
+        // Update the input field
+        document.querySelector("[name='qtyInput-" + index + "']").value = newQuantity;
+        trackChanges(index);
+    }
+
+    // Update Quantity based on selection
+    function onItemSelected(index) {
+
+        var checkbox = document.querySelector("[name='itemSelect-" + index + "']");
+        var isChecked = checkbox.checked;
+
+        if (isChecked)
+            document.querySelector("[name='qtyInput-" + index + "']").value = 1;
+        else
+            document.querySelector("[name='qtyInput-" + index + "']").value = 0;
+        trackChanges(index);
+    }
+
+   
+    var modifiedData = {}; // Object to store modified data
+
+    // Function to track changes and update modifiedData
+    function trackChanges(index) {
+        // Check for changes in Quantity and IsSelected
+        var qtyInput = document.querySelector("[name='qtyInput-" + index + "']");
+        var isSelectedCheckbox = document.querySelector("[name='itemSelect-" + index + "']");
+
+        if (qtyInput.value !== "" || isSelectedCheckbox.checked) {
+            // Store the modified data in the object
+            modifiedData[index] = {
+                Quantity: parseInt(qtyInput.value),
+                IsSelected: isSelectedCheckbox.checked
+            };
+        } else {
+            // Remove the entry if no changes
+            delete modifiedData[index];
+        }
+    }
+
+    // Function to submit modified data
+    function submitModifiedData() {
+        // Create a form to submit the modified data
+        var form = document.createElement('form');
+        form.method = "post";
+        form.action = "/Purchase/Buy"; 
+
+        // Add an input field with modified data as JSON
+        var input = document.createElement('input');
+        input.type = "hidden";
+        input.name = "modifiedData";
+        input.value = JSON.stringify(modifiedData);
+
+        // Append the input field to the form
+        form.appendChild(input);
+
+        // Append the form to the document body and submit it
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
